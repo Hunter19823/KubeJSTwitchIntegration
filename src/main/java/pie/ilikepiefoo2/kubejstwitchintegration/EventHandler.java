@@ -5,9 +5,7 @@ import com.github.twitch4j.chat.events.TwitchEvent;
 import com.github.twitch4j.chat.events.channel.*;
 import com.github.twitch4j.chat.events.roomstate.*;
 import dev.latvian.kubejs.script.BindingsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pie.ilikepiefoo2.kubejstwitchintegration.events.*;
@@ -22,23 +20,22 @@ import static pie.ilikepiefoo2.kubejstwitchintegration.KubeJSEvents.*;
 /**
  * @author ILIKEPIEFOO2
  */
-@Mod.EventBusSubscriber
 public class EventHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(EventHandler.class);
 
-    @SubscribeEvent
     public static void onKubeJSBindingsEvent( BindingsEvent event)
     {
+        LOGGER.info("Registering Twitch Bindings.");
         TwitchWrapper wrapper = new TwitchWrapper();
         event.add("twitch", wrapper);
         event.add("Twitch", wrapper);
         event.add("twitch4j", wrapper);
         event.add("Twitch4j", wrapper);
     }
-
-    @SubscribeEvent
-    public static void onConfigLoad( ModConfig.ModConfigEvent event)
+    // TODO replace with TwitchClientInitEvent
+    public static void onClientCreation( FMLServerStartedEvent event )
     {
+        LOGGER.info("Reloading Twitch Event Manager.");
         registerEventManager(BITS_BADGE_EARNED_EVENT,BitsBadgeEarnedEvent.class,BitsBadgeEarnedEventJS.class);
         registerEventManager(BROADCASTER_LANGUAGE_EVENT, BroadcasterLanguageEvent.class, BroadcasterLanguageEventJS.class);
         registerEventManager(CHANNEL_JOIN_EVENT, ChannelJoinEvent.class, ChannelJoinEventJS.class);
@@ -70,6 +67,8 @@ public class EventHandler {
         registerEventManager(PRIME_GIFT_SUBSCRIPTION_UPGRADE_EVENT,PrimeSubUpgradeEvent.class,PrimeSubUpgradeEventJS.class);
         registerEventManager(RAID_CANCELLATION_EVENT,RaidCancellationEvent.class,RaidCancellationEventJS.class);
         registerEventManager(RAID_EVENT,RaidEvent.class,RaidEventJS.class);
+        registerEventManager(REWARD_GIFT_EVENT, RewardGiftEvent.class, RewardGiftEventJS.class);
+        registerEventManager(RITUAL_EVENT, RitualEvent.class, RitualEventJS.class);
         registerEventManager(ROBOT_9000_EVENT, Robot9000Event.class,Robot9000EventJS.class);
         registerEventManager(SLOW_MODE_EVENT,SlowModeEvent.class,SlowModeEventJS.class);
         registerEventManager(SUBSCRIPTION_ONLY_EVENT,SubscribersOnlyEvent.class,SubscribersOnlyEventJS.class);
@@ -82,6 +81,7 @@ public class EventHandler {
 
     private static void registerEventManager( String id, Class<? extends TwitchEvent> eventClass, Class<? extends CommonEventJS> eventJSClass)
     {
+        LOGGER.info("Registering Twitch Event {}",id);
         final Constructor<? extends CommonEventJS> constructor;
         try {
             constructor = eventJSClass.getConstructor(eventClass);
@@ -90,16 +90,20 @@ public class EventHandler {
                         try {
                             constructor.newInstance(event).postCommon(id);
                         } catch (InstantiationException e) {
-                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler >> {}",e);
+                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
                         } catch (IllegalAccessException e) {
-                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler >> {}",e);
+                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
                         } catch (InvocationTargetException e) {
-                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler >> {}",e);
+                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
+                        } catch (NoClassDefFoundError e) {
+                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
                         }
                     }
             );
         } catch (NoSuchMethodException e) {
-            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler >> {}",e);
+            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
+        } catch (NoClassDefFoundError e) {
+            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
         }
     }
 }
