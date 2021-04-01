@@ -1,12 +1,11 @@
 package pie.ilikepiefoo2.kubejstwitchintegration;
 
+/**
+ * @author ILIKEPIEFOO2
+ */
 public class KubeJSEvents {
 
-    public static final String BITS_BADGE_EARNED_EVENT = "twitch.bits.badge.earned";
-
-    @Deprecated
-    public static final String BROADCASTER_LANGUAGE_EVENT = "twitch.broadcaster.language";
-
+    public static final String BITS_BADGE_EARNED_EVENT                  = "twitch.bits.badge.earned";
     public static final String CHANNEL_JOIN_EVENT                       = "twitch.channel.join";
     public static final String CHANNEL_LEAVE_EVENT                      = "twitch.channel.leave";
     public static final String CHANNEL_MESSAGE_ACTION_EVENT             = "twitch.channel.message.action";
@@ -40,11 +39,13 @@ public class KubeJSEvents {
     public static final String RITUAL_EVENT                             = "twitch.ritual"; // No clue what this is for.
     public static final String ROBOT_9000_EVENT                         = "twitch.robot9000";
     public static final String SLOW_MODE_EVENT                          = "twitch.chat.mode.slow";
-    public static final String SUBSCRIPTION_ONLY_EVENT                       = "twitch.chat.subonly";
+    public static final String SUBSCRIPTION_ONLY_EVENT                  = "twitch.chat.subonly";
     public static final String SUBSCRIPTION_EVENT                       = "twitch.subscription";
     public static final String USER_BAN_EVENT                           = "twitch.user.ban";
     public static final String USER_STATE_EVENT                         = "twitch.user.state";
     public static final String USER_TIMEOUT_EVENT                       = "twitch.user.timeout";
+    @Deprecated
+    public static final String BROADCASTER_LANGUAGE_EVENT               = "twitch.broadcaster.language";
 
 
 }

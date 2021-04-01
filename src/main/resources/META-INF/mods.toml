@@ -6,11 +6,12 @@ license = "All Rights Reserved"
 [[mods]]
 modId="kubejstwitchintegration"
 version="${file.jarVersion}"
-displayName="KubeJSTwitchIntegration"
+displayName="KubeJS Twitch4j Integration"
 logoFile="KubeJSIcon.png"
 authors="ILIKEPIEFOO2"
 description='''
 KubeJS Twitch4j Integration.
+Full list of events can be found here:
 '''
 
 [[dependencies.kubejstwitchintegration]]
@@ -23,7 +24,7 @@ KubeJS Twitch4j Integration.
 [[dependencies.kubejstwitchintegration]]
            modId="twitchintegration"
            mandatory = true
-           versionRange = "[1.0,)"
+           versionRange = "[1.0.1,)"
            ordering = "AFTER"
            side="BOTH"
 
