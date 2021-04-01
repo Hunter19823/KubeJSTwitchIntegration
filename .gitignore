@@ -1,0 +1,8 @@
+/.idea/workspace.xml
+*.bin
+*.class
+build/
+run/
+.gradle/
+logs/
+.idea/*
