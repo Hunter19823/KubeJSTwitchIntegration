@@ -1,0 +1,35 @@
+modLoader="javafml"
+loaderVersion="[35,)"
+issueTrackerURL = "https://github.com/Hunter19823/KubeJSBorealis/issues"
+license = "All Rights Reserved"
+
+[[mods]]
+modId="kubejstwitchintegration"
+version="${file.jarVersion}"
+displayName="KubeJSTwitchIntegration"
+logoFile="KubeJSIcon.png"
+authors="ILIKEPIEFOO2"
+description='''
+KubeJS Twitch4j Integration.
+'''
+
+[[dependencies.kubejstwitchintegration]]
+           modId="forge"
+           mandatory = true
+           versionRange = "[35,)"
+           ordering = "NONE"
+           side="BOTH"
+
+[[dependencies.kubejstwitchintegration]]
+           modId="twitchintegration"
+           mandatory = true
+           versionRange = "[1.0,)"
+           ordering = "AFTER"
+           side="BOTH"
+
+[[dependencies.kubejstwitchintegration]]
+            modId="kubejs"
+            mandatory = true
+            versionRange = "[1603,)"
+            ordering = "AFTER"
+            side="BOTH"
