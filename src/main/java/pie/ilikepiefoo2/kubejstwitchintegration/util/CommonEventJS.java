@@ -2,7 +2,9 @@ package pie.ilikepiefoo2.kubejstwitchintegration.util;
 
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.script.ScriptType;
-
+/**
+ * @author ILIKEPIEFOO2
+ */
 public abstract class CommonEventJS extends EventJS {
     public final void postCommon(String id)
     {

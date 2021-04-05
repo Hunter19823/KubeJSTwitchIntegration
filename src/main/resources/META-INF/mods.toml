@@ -24,7 +24,7 @@ Full list of events can be found here:
 [[dependencies.kubejstwitchintegration]]
            modId="twitchintegration"
            mandatory = true
-           versionRange = "[1.0.1,)"
+           versionRange = "[1.0.3,)"
            ordering = "AFTER"
            side="BOTH"
 

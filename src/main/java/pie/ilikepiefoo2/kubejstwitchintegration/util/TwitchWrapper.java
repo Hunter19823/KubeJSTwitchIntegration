@@ -2,14 +2,24 @@ package pie.ilikepiefoo2.kubejstwitchintegration.util;
 
 import com.github.philippheuer.events4j.core.EventManager;
 import com.github.twitch4j.TwitchClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import pie.ilikepiefoo2.twitchintegration.TwitchConfigHandler;
-
+/**
+ * @author ILIKEPIEFOO2
+ */
 public class TwitchWrapper {
+    private static final Logger LOGGER = LogManager.getLogger(TwitchWrapper.class);
     public TwitchWrapper()
     {}
 
     public TwitchClient getClient()
     {
+        try{
+            Class.forName("com.github.twitch4j.TwitchClient");
+        }catch(Exception e){
+            LOGGER.error("Unable To load class TwitchClient ",e);
+        }
         return TwitchConfigHandler.getClient();
     }
 
