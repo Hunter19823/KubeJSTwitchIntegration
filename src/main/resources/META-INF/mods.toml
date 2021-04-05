@@ -12,6 +12,9 @@ authors="ILIKEPIEFOO2"
 description='''
 KubeJS Twitch4j Integration.
 Full list of events can be found here:
+https://github.com/Hunter19823/KubeJSTwitchIntegration/blob/master/src/main/java/pie/ilikepiefoo2/kubejstwitchintegration/KubeJSEvents.java
+Example Scripts can be found:
+https://github.com/Hunter19823/KubeJSTwitchIntegration/tree/master/src/test/resources
 '''
 
 [[dependencies.kubejstwitchintegration]]
@@ -24,7 +27,7 @@ Full list of events can be found here:
 [[dependencies.kubejstwitchintegration]]
            modId="twitchintegration"
            mandatory = true
-           versionRange = "[1.0.3,)"
+           versionRange = "[1.0.4,)"
            ordering = "AFTER"
            side="BOTH"
 

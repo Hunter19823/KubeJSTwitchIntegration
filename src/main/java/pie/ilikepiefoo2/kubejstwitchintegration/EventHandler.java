@@ -86,49 +86,59 @@ public class EventHandler {
         registerTwitchChatEvents(event);
     }
 
+    private static void loadRequired() {
+        try{
+            Class.forName("com.neovisionaries.ws.client.WebSocket");
+            Class.forName("com.neovisionaries.ws.client.WebSocketError");
+        }catch (Exception e){
+            LOGGER.error("Unable To load Required Websocket Classes for some twitch Events... {}",e);
+        }
+    }
+
     private static void registerTwitchChatEvents( TwitchClientInitEvent event )
     {
         LOGGER.info("Registering Twitch Chat Event Manager.");
-        registerEventManager(BITS_BADGE_EARNED_EVENT,com.github.twitch4j.chat.events.channel.BitsBadgeEarnedEvent.class, BitsBadgeEarnedEventJS.class);
-        registerEventManager(BROADCASTER_LANGUAGE_EVENT, com.github.twitch4j.chat.events.roomstate.BroadcasterLanguageEvent.class, BroadcasterLanguageEventJS.class);
-        registerEventManager(CHANNEL_JOIN_EVENT, com.github.twitch4j.chat.events.channel.ChannelJoinEvent.class, ChannelJoinEventJS.class);
-        registerEventManager(CHANNEL_LEAVE_EVENT, com.github.twitch4j.chat.events.channel.ChannelLeaveEvent.class, ChannelLeaveEventJS.class);
-        registerEventManager(CHANNEL_MESSAGE_ACTION_EVENT, com.github.twitch4j.chat.events.channel.ChannelMessageActionEvent.class, ChannelMessageActionEventJS.class);
-        registerEventManager(CHANNEL_MESSAGE_EVENT, com.github.twitch4j.chat.events.channel.ChannelMessageEvent.class, ChannelMessageEventJS.class);
-        registerEventManager(CHANNEL_MOD_EVENT,com.github.twitch4j.chat.events.channel.ChannelModEvent.class, ChannelModEventJS.class);
-        registerEventManager(CHANNEL_NOTICE_EVENT, com.github.twitch4j.chat.events.channel.ChannelNoticeEvent.class, ChannelNoticeEventJS.class);
-        registerEventManager(CHANNEL_STATE_EVENT, com.github.twitch4j.chat.events.channel.ChannelStateEvent.class, ChannelStateEventJS.class);
-        registerEventManager(CHEER_EVENT, com.github.twitch4j.chat.events.channel.CheerEvent.class, CheerEventJS.class);
-        registerEventManager(CLEAR_CHAT_EVENT, com.github.twitch4j.chat.events.channel.ClearChatEvent.class, ClearChatEventJS.class);
-        registerEventManager(COMMAND_EVENT, com.github.twitch4j.chat.events.CommandEvent.class, CommandEventJS.class);
-        registerEventManager(DONATION_EVENT, com.github.twitch4j.chat.events.channel.DonationEvent.class, DonationEventJS.class);
-        registerEventManager(EMOTE_ONLY_EVENT, com.github.twitch4j.chat.events.roomstate.EmoteOnlyEvent.class, EmoteOnlyEventJS.class);
-        registerEventManager(EXTEND_SUBSCRIPTION_EVENT, com.github.twitch4j.chat.events.channel.ExtendSubscriptionEvent.class, ExtendSubscriptionEventJS.class);
-        registerEventManager(FOLLOWERS_ONLY_EVENT, com.github.twitch4j.chat.events.roomstate.FollowersOnlyEvent.class, FollowersOnlyEventJS.class);
-        registerEventManager(FOLLOW_EVENT, com.github.twitch4j.chat.events.channel.FollowEvent.class, FollowEventJS.class);
-        registerEventManager(GIFT_SUBSCRIPTION_EVENT, com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent.class, GiftSubscriptionsEventJS.class);
-        registerEventManager(GIFT_SUBSCRIPTION_UPGRADE_EVENT, com.github.twitch4j.chat.events.channel.GiftSubUpgradeEvent.class, GiftSubUpgradeEventJS.class);
-        registerEventManager(HOST_OFF_EVENT, com.github.twitch4j.chat.events.channel.HostOffEvent.class, HostOffEventJS.class);
-        registerEventManager(HOST_ON_EVENT, com.github.twitch4j.chat.events.channel.HostOnEvent.class, HostOnEventJS.class);
-        registerEventManager(IRC_MESSAGE_EVENT, com.github.twitch4j.chat.events.channel.IRCMessageEvent.class, IRCMessageEventJS.class);
-        registerEventManager(LIST_MODS_EVENT, com.github.twitch4j.chat.events.channel.ListModsEvent.class, ListModsEventJS.class);
-        registerEventManager(LIST_VIPS_EVENT, com.github.twitch4j.chat.events.channel.ListVipsEvent.class, ListVipsEventJS.class);
-        registerEventManager(MESSAGE_DELETE_ERROR_EVENT, com.github.twitch4j.chat.events.channel.MessageDeleteError.class, MessageDeleteErrorEventJS.class);
-        registerEventManager(MESSAGE_DELETE_SUCCESS_EVENT, com.github.twitch4j.chat.events.channel.MessageDeleteSuccess.class, MessageDeleteSuccessEventJS.class);
-        registerEventManager(PAY_FORWARD_EVENT, com.github.twitch4j.chat.events.channel.PayForwardEvent.class, PayForwardEventJS.class);
-        registerEventManager(PRIME_GIFT_SUBSCRIPTION_EVENT, com.github.twitch4j.chat.events.channel.PrimeGiftReceivedEvent.class, PrimeGiftReceivedEventJS.class);
-        registerEventManager(PRIME_GIFT_SUBSCRIPTION_UPGRADE_EVENT, com.github.twitch4j.chat.events.channel.PrimeSubUpgradeEvent.class, PrimeSubUpgradeEventJS.class);
-        registerEventManager(RAID_CANCELLATION_EVENT, com.github.twitch4j.chat.events.channel.RaidCancellationEvent.class, RaidCancellationEventJS.class);
-        registerEventManager(RAID_EVENT, com.github.twitch4j.chat.events.channel.RaidEvent.class, RaidEventJS.class);
-        registerEventManager(REWARD_GIFT_EVENT, com.github.twitch4j.chat.events.channel.RewardGiftEvent.class, RewardGiftEventJS.class);
-        registerEventManager(RITUAL_EVENT, com.github.twitch4j.chat.events.channel.RitualEvent.class, RitualEventJS.class);
-        registerEventManager(ROBOT_9000_EVENT, com.github.twitch4j.chat.events.roomstate.Robot9000Event.class, Robot9000EventJS.class);
-        registerEventManager(SLOW_MODE_EVENT, com.github.twitch4j.chat.events.roomstate.SlowModeEvent.class, SlowModeEventJS.class);
-        registerEventManager(SUBSCRIPTION_ONLY_EVENT, com.github.twitch4j.chat.events.roomstate.SubscribersOnlyEvent.class, SubscribersOnlyEventJS.class);
-        registerEventManager(SUBSCRIPTION_EVENT, com.github.twitch4j.chat.events.channel.SubscriptionEvent.class, SubscriptionEventJS.class);
-        registerEventManager(USER_BAN_EVENT, com.github.twitch4j.chat.events.channel.UserBanEvent.class, UserBanEventJS.class);
-        registerEventManager(USER_STATE_EVENT, com.github.twitch4j.chat.events.channel.UserStateEvent.class, UserStateEventJS.class);
-        registerEventManager(USER_TIMEOUT_EVENT, com.github.twitch4j.chat.events.channel.UserTimeoutEvent.class, UserTimeoutEventJS.class);
+        loadRequired();
+        registerEventManager(BITS_BADGE_EARNED_EVENT, "com.github.twitch4j.chat.events.channel.BitsBadgeEarnedEvent", BitsBadgeEarnedEventJS.class);
+        registerEventManager(BROADCASTER_LANGUAGE_EVENT, "com.github.twitch4j.chat.events.roomstate.BroadcasterLanguageEvent", BroadcasterLanguageEventJS.class);
+        registerEventManager(CHANNEL_JOIN_EVENT, "com.github.twitch4j.chat.events.channel.ChannelJoinEvent", ChannelJoinEventJS.class);
+        registerEventManager(CHANNEL_LEAVE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelLeaveEvent", ChannelLeaveEventJS.class);
+        registerEventManager(CHANNEL_MESSAGE_ACTION_EVENT, "com.github.twitch4j.chat.events.channel.ChannelMessageActionEvent", ChannelMessageActionEventJS.class);
+        registerEventManager(CHANNEL_MESSAGE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelMessageEvent", ChannelMessageEventJS.class);
+        registerEventManager(CHANNEL_MOD_EVENT, "com.github.twitch4j.chat.events.channel.ChannelModEvent", ChannelModEventJS.class);
+        registerEventManager(CHANNEL_NOTICE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelNoticeEvent", ChannelNoticeEventJS.class);
+        registerEventManager(CHANNEL_STATE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelStateEvent", ChannelStateEventJS.class);
+        registerEventManager(CHEER_EVENT, "com.github.twitch4j.chat.events.channel.CheerEvent", CheerEventJS.class);
+        registerEventManager(CLEAR_CHAT_EVENT, "com.github.twitch4j.chat.events.channel.ClearChatEvent", ClearChatEventJS.class);
+        registerEventManager(COMMAND_EVENT, "com.github.twitch4j.chat.events.CommandEvent", CommandEventJS.class);
+        registerEventManager(DONATION_EVENT, "com.github.twitch4j.chat.events.channel.DonationEvent", DonationEventJS.class);
+        registerEventManager(EMOTE_ONLY_EVENT, "com.github.twitch4j.chat.events.roomstate.EmoteOnlyEvent", EmoteOnlyEventJS.class);
+        registerEventManager(EXTEND_SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.ExtendSubscriptionEvent", ExtendSubscriptionEventJS.class);
+        registerEventManager(FOLLOWERS_ONLY_EVENT, "com.github.twitch4j.chat.events.roomstate.FollowersOnlyEvent", FollowersOnlyEventJS.class);
+        registerEventManager(FOLLOW_EVENT, "com.github.twitch4j.chat.events.channel.FollowEvent", FollowEventJS.class);
+        registerEventManager(GIFT_SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent", GiftSubscriptionsEventJS.class);
+        registerEventManager(GIFT_SUBSCRIPTION_UPGRADE_EVENT, "com.github.twitch4j.chat.events.channel.GiftSubUpgradeEvent", GiftSubUpgradeEventJS.class);
+        registerEventManager(HOST_OFF_EVENT, "com.github.twitch4j.chat.events.channel.HostOffEvent", HostOffEventJS.class);
+        registerEventManager(HOST_ON_EVENT, "com.github.twitch4j.chat.events.channel.HostOnEvent", HostOnEventJS.class);
+        registerEventManager(IRC_MESSAGE_EVENT, "com.github.twitch4j.chat.events.channel.IRCMessageEvent", IRCMessageEventJS.class);
+        registerEventManager(LIST_MODS_EVENT, "com.github.twitch4j.chat.events.channel.ListModsEvent", ListModsEventJS.class);
+        registerEventManager(LIST_VIPS_EVENT, "com.github.twitch4j.chat.events.channel.ListVipsEvent", ListVipsEventJS.class);
+        registerEventManager(MESSAGE_DELETE_ERROR_EVENT, "com.github.twitch4j.chat.events.channel.MessageDeleteError", MessageDeleteErrorEventJS.class);
+        registerEventManager(MESSAGE_DELETE_SUCCESS_EVENT, "com.github.twitch4j.chat.events.channel.MessageDeleteSuccess", MessageDeleteSuccessEventJS.class);
+        registerEventManager(PAY_FORWARD_EVENT, "com.github.twitch4j.chat.events.channel.PayForwardEvent", PayForwardEventJS.class);
+        registerEventManager(PRIME_GIFT_SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.PrimeGiftReceivedEvent", PrimeGiftReceivedEventJS.class);
+        registerEventManager(PRIME_GIFT_SUBSCRIPTION_UPGRADE_EVENT, "com.github.twitch4j.chat.events.channel.PrimeSubUpgradeEvent", PrimeSubUpgradeEventJS.class);
+        registerEventManager(RAID_CANCELLATION_EVENT, "com.github.twitch4j.chat.events.channel.RaidCancellationEvent", RaidCancellationEventJS.class);
+        registerEventManager(RAID_EVENT, "com.github.twitch4j.chat.events.channel.RaidEvent", RaidEventJS.class);
+        registerEventManager(REWARD_GIFT_EVENT, "com.github.twitch4j.chat.events.channel.RewardGiftEvent", RewardGiftEventJS.class);
+        registerEventManager(RITUAL_EVENT, "com.github.twitch4j.chat.events.channel.RitualEvent", RitualEventJS.class);
+        registerEventManager(ROBOT_9000_EVENT, "com.github.twitch4j.chat.events.roomstate.Robot9000Event", Robot9000EventJS.class);
+        registerEventManager(SLOW_MODE_EVENT, "com.github.twitch4j.chat.events.roomstate.SlowModeEvent", SlowModeEventJS.class);
+        registerEventManager(SUBSCRIPTION_ONLY_EVENT, "com.github.twitch4j.chat.events.roomstate.SubscribersOnlyEvent", SubscribersOnlyEventJS.class);
+        registerEventManager(SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.SubscriptionEvent", SubscriptionEventJS.class);
+        registerEventManager(USER_BAN_EVENT, "com.github.twitch4j.chat.events.channel.UserBanEvent", UserBanEventJS.class);
+        registerEventManager(USER_STATE_EVENT, "com.github.twitch4j.chat.events.channel.UserStateEvent", UserStateEventJS.class);
+        registerEventManager(USER_TIMEOUT_EVENT, "com.github.twitch4j.chat.events.channel.UserTimeoutEvent", UserTimeoutEventJS.class);
         LOGGER.info("Finished Reloading Twitch Chat Event Manager.");
     }
 
@@ -166,7 +176,8 @@ public class EventHandler {
             eventClass = Class.forName(twitchClass);
             registerEventManager(id, eventClass,eventJSClass);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,twitchClass);
+            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> \"{}\" >> {}",id, twitchClass, e);
+            //e.printStackTrace();
         }
     }
 }
