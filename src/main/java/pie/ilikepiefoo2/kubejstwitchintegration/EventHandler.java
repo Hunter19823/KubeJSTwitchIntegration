@@ -98,7 +98,7 @@ public class EventHandler {
         registerEventManager(CHANNEL_MOD_EVENT,com.github.twitch4j.chat.events.channel.ChannelModEvent.class, ChannelModEventJS.class);
         registerEventManager(CHANNEL_NOTICE_EVENT, com.github.twitch4j.chat.events.channel.ChannelNoticeEvent.class, ChannelNoticeEventJS.class);
         registerEventManager(CHANNEL_STATE_EVENT, com.github.twitch4j.chat.events.channel.ChannelStateEvent.class, ChannelStateEventJS.class);
-        registerEventManager(CHEER_EVENT, com.github.twitch4j.chat.events.channel.ChannelStateEvent.class, CheerEventJS.class);
+        registerEventManager(CHEER_EVENT, com.github.twitch4j.chat.events.channel.CheerEvent.class, CheerEventJS.class);
         registerEventManager(CLEAR_CHAT_EVENT, com.github.twitch4j.chat.events.channel.ClearChatEvent.class, ClearChatEventJS.class);
         registerEventManager(COMMAND_EVENT, com.github.twitch4j.chat.events.CommandEvent.class, CommandEventJS.class);
         registerEventManager(DONATION_EVENT, com.github.twitch4j.chat.events.channel.DonationEvent.class, DonationEventJS.class);
