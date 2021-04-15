@@ -6,3 +6,4 @@ run/
 .gradle/
 logs/
 .idea/*
+mcmodsrepo/*

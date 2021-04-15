@@ -28,7 +28,7 @@ https://github.com/Hunter19823/KubeJSTwitchIntegration/tree/master/src/test/reso
 [[dependencies.kubejstwitchintegration]]
            modId="twitchintegration"
            mandatory = true
-           versionRange = "[1.0.4,)"
+           versionRange = "[1.1.0,)"
            ordering = "AFTER"
            side="BOTH"
 

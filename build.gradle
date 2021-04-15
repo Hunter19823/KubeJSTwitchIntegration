@@ -94,6 +94,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compile ("curse.maven:${twitch_4j_lib}:${twitch_4j_lib_version}")
     compile ("curse.maven:${kubejs}:${kubejs_version}")
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
 }
 
 jar {

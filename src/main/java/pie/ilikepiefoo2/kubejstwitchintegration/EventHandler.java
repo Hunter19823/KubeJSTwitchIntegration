@@ -3,56 +3,11 @@ package pie.ilikepiefoo2.kubejstwitchintegration;
 
 
 import dev.latvian.kubejs.script.BindingsEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.BitsBadgeEarnedEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.BroadcasterLanguageEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ChannelJoinEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ChannelLeaveEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ChannelMessageActionEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ChannelMessageEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ChannelModEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ChannelNoticeEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ChannelStateEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.CheerEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ClearChatEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.CommandEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.DonationEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.EmoteOnlyEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ExtendSubscriptionEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.FollowEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.FollowersOnlyEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.GiftSubUpgradeEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.GiftSubscriptionsEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.HostOffEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.HostOnEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.IRCMessageEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ListModsEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.ListVipsEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.MessageDeleteErrorEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.MessageDeleteSuccessEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.PayForwardEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.PrimeGiftReceivedEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.PrimeSubUpgradeEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.RaidCancellationEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.RaidEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.RewardGiftEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.RitualEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.Robot9000EventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.SlowModeEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.SubscribersOnlyEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.SubscriptionEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.UserBanEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.UserStateEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.events.chat.UserTimeoutEventJS;
-import pie.ilikepiefoo2.kubejstwitchintegration.util.CommonEventJS;
 import pie.ilikepiefoo2.kubejstwitchintegration.util.TwitchWrapper;
-import pie.ilikepiefoo2.twitchintegration.TwitchClientInitEvent;
-import pie.ilikepiefoo2.twitchintegration.TwitchConfigHandler;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import static pie.ilikepiefoo2.kubejstwitchintegration.KubeJSEvents.*;
 
 /**
@@ -72,112 +27,115 @@ public class EventHandler {
         event.add("Twitch4j", wrapper);
     }
 
-    public static void onCommonSetup( FMLCommonSetupEvent event ){
-        LOGGER.info("Common setup.");
-        if(!clientBound) {
-            onClientCreation(null);
-        }
-    }
-
-    public static void onClientCreation( TwitchClientInitEvent event )
+    public static void hookTwitchEvents()
     {
-        clientBound = true;
-        LOGGER.info("Reloading Twitch Event Manager.");
-        registerTwitchChatEvents(event);
-    }
-
-    private static void loadRequired() {
-        try{
-            Class.forName("com.neovisionaries.ws.client.WebSocket");
-            Class.forName("com.neovisionaries.ws.client.WebSocketError");
-        }catch (Exception e){
-            LOGGER.error("Unable To load Required Websocket Classes for some twitch Events... {}",e);
-        }
-    }
-
-    private static void registerTwitchChatEvents( TwitchClientInitEvent event )
-    {
-        LOGGER.info("Registering Twitch Chat Event Manager.");
-        loadRequired();
-        registerEventManager(BITS_BADGE_EARNED_EVENT, "com.github.twitch4j.chat.events.channel.BitsBadgeEarnedEvent", BitsBadgeEarnedEventJS.class);
-        registerEventManager(BROADCASTER_LANGUAGE_EVENT, "com.github.twitch4j.chat.events.roomstate.BroadcasterLanguageEvent", BroadcasterLanguageEventJS.class);
-        registerEventManager(CHANNEL_JOIN_EVENT, "com.github.twitch4j.chat.events.channel.ChannelJoinEvent", ChannelJoinEventJS.class);
-        registerEventManager(CHANNEL_LEAVE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelLeaveEvent", ChannelLeaveEventJS.class);
-        registerEventManager(CHANNEL_MESSAGE_ACTION_EVENT, "com.github.twitch4j.chat.events.channel.ChannelMessageActionEvent", ChannelMessageActionEventJS.class);
-        registerEventManager(CHANNEL_MESSAGE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelMessageEvent", ChannelMessageEventJS.class);
-        registerEventManager(CHANNEL_MOD_EVENT, "com.github.twitch4j.chat.events.channel.ChannelModEvent", ChannelModEventJS.class);
-        registerEventManager(CHANNEL_NOTICE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelNoticeEvent", ChannelNoticeEventJS.class);
-        registerEventManager(CHANNEL_STATE_EVENT, "com.github.twitch4j.chat.events.channel.ChannelStateEvent", ChannelStateEventJS.class);
-        registerEventManager(CHEER_EVENT, "com.github.twitch4j.chat.events.channel.CheerEvent", CheerEventJS.class);
-        registerEventManager(CLEAR_CHAT_EVENT, "com.github.twitch4j.chat.events.channel.ClearChatEvent", ClearChatEventJS.class);
-        registerEventManager(COMMAND_EVENT, "com.github.twitch4j.chat.events.CommandEvent", CommandEventJS.class);
-        registerEventManager(DONATION_EVENT, "com.github.twitch4j.chat.events.channel.DonationEvent", DonationEventJS.class);
-        registerEventManager(EMOTE_ONLY_EVENT, "com.github.twitch4j.chat.events.roomstate.EmoteOnlyEvent", EmoteOnlyEventJS.class);
-        registerEventManager(EXTEND_SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.ExtendSubscriptionEvent", ExtendSubscriptionEventJS.class);
-        registerEventManager(FOLLOWERS_ONLY_EVENT, "com.github.twitch4j.chat.events.roomstate.FollowersOnlyEvent", FollowersOnlyEventJS.class);
-        registerEventManager(FOLLOW_EVENT, "com.github.twitch4j.chat.events.channel.FollowEvent", FollowEventJS.class);
-        registerEventManager(GIFT_SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent", GiftSubscriptionsEventJS.class);
-        registerEventManager(GIFT_SUBSCRIPTION_UPGRADE_EVENT, "com.github.twitch4j.chat.events.channel.GiftSubUpgradeEvent", GiftSubUpgradeEventJS.class);
-        registerEventManager(HOST_OFF_EVENT, "com.github.twitch4j.chat.events.channel.HostOffEvent", HostOffEventJS.class);
-        registerEventManager(HOST_ON_EVENT, "com.github.twitch4j.chat.events.channel.HostOnEvent", HostOnEventJS.class);
-        registerEventManager(IRC_MESSAGE_EVENT, "com.github.twitch4j.chat.events.channel.IRCMessageEvent", IRCMessageEventJS.class);
-        registerEventManager(LIST_MODS_EVENT, "com.github.twitch4j.chat.events.channel.ListModsEvent", ListModsEventJS.class);
-        registerEventManager(LIST_VIPS_EVENT, "com.github.twitch4j.chat.events.channel.ListVipsEvent", ListVipsEventJS.class);
-        registerEventManager(MESSAGE_DELETE_ERROR_EVENT, "com.github.twitch4j.chat.events.channel.MessageDeleteError", MessageDeleteErrorEventJS.class);
-        registerEventManager(MESSAGE_DELETE_SUCCESS_EVENT, "com.github.twitch4j.chat.events.channel.MessageDeleteSuccess", MessageDeleteSuccessEventJS.class);
-        registerEventManager(PAY_FORWARD_EVENT, "com.github.twitch4j.chat.events.channel.PayForwardEvent", PayForwardEventJS.class);
-        registerEventManager(PRIME_GIFT_SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.PrimeGiftReceivedEvent", PrimeGiftReceivedEventJS.class);
-        registerEventManager(PRIME_GIFT_SUBSCRIPTION_UPGRADE_EVENT, "com.github.twitch4j.chat.events.channel.PrimeSubUpgradeEvent", PrimeSubUpgradeEventJS.class);
-        registerEventManager(RAID_CANCELLATION_EVENT, "com.github.twitch4j.chat.events.channel.RaidCancellationEvent", RaidCancellationEventJS.class);
-        registerEventManager(RAID_EVENT, "com.github.twitch4j.chat.events.channel.RaidEvent", RaidEventJS.class);
-        registerEventManager(REWARD_GIFT_EVENT, "com.github.twitch4j.chat.events.channel.RewardGiftEvent", RewardGiftEventJS.class);
-        registerEventManager(RITUAL_EVENT, "com.github.twitch4j.chat.events.channel.RitualEvent", RitualEventJS.class);
-        registerEventManager(ROBOT_9000_EVENT, "com.github.twitch4j.chat.events.roomstate.Robot9000Event", Robot9000EventJS.class);
-        registerEventManager(SLOW_MODE_EVENT, "com.github.twitch4j.chat.events.roomstate.SlowModeEvent", SlowModeEventJS.class);
-        registerEventManager(SUBSCRIPTION_ONLY_EVENT, "com.github.twitch4j.chat.events.roomstate.SubscribersOnlyEvent", SubscribersOnlyEventJS.class);
-        registerEventManager(SUBSCRIPTION_EVENT, "com.github.twitch4j.chat.events.channel.SubscriptionEvent", SubscriptionEventJS.class);
-        registerEventManager(USER_BAN_EVENT, "com.github.twitch4j.chat.events.channel.UserBanEvent", UserBanEventJS.class);
-        registerEventManager(USER_STATE_EVENT, "com.github.twitch4j.chat.events.channel.UserStateEvent", UserStateEventJS.class);
-        registerEventManager(USER_TIMEOUT_EVENT, "com.github.twitch4j.chat.events.channel.UserTimeoutEvent", UserTimeoutEventJS.class);
-        LOGGER.info("Finished Reloading Twitch Chat Event Manager.");
-    }
-
-    private static void registerEventManager( String id, Class<?> eventClass, Class<? extends CommonEventJS> eventJSClass)
-    {
-        LOGGER.info("Registering Twitch Event {}",id);
-        final Constructor<? extends CommonEventJS> constructor;
-        try {
-            constructor = eventJSClass.getConstructor(eventClass);
-            TwitchConfigHandler.getClient().getEventManager().onEvent(eventClass,
-                    event -> {
-                        try {
-                            constructor.newInstance(event).postCommon(id);
-                        } catch (InstantiationException e) {
-                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
-                        } catch (IllegalAccessException e) {
-                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
-                        } catch (InvocationTargetException e) {
-                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
-                        } catch (NoClassDefFoundError e) {
-                            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
-                        }
-                    }
-            );
-        } catch (NoSuchMethodException e) {
-            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
-        } catch (NoClassDefFoundError e) {
-            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> {}",id,e);
-        }
-    }
-    private static void registerEventManager( String id, String twitchClass, Class<? extends CommonEventJS> eventJSClass)
-    {
-        Class<?> eventClass = null;
-        try {
-            eventClass = Class.forName(twitchClass);
-            registerEventManager(id, eventClass,eventJSClass);
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("Error Instantiating KubeJS Twitch Integration Event Handler id {} >> \"{}\" >> {}",id, twitchClass, e);
-            //e.printStackTrace();
-        }
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelCommerceEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelCommerceEventJS(event).postCommon(PUBSUB_CHANNEL_COMMERCE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UserPredictionMadeEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UserPredictionMadeEventJS(event).postCommon(PUBSUB_USER_PREDICTION_MADE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.PresenceSettingsEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.PresenceSettingsEventJS(event).postCommon(PUBSUB_PRESENCE_SETTINGS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.common.events.channel.ChannelGoLiveEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.common.events.channel.ChannelGoLiveEventJS(event).postCommon(COMMON_CHANNEL_CHANNEL_GO_LIVE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ChannelModEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ChannelModEventJS(event).postCommon(CHAT_CHANNEL_CHANNEL_MOD);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.common.events.TwitchEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.common.events.TwitchEventJS(event).postCommon(COMMON_TWITCH);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.RaidCancelEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.RaidCancelEventJS(event).postCommon(PUBSUB_RAID_CANCEL);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.HypeTrainLevelUpEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.HypeTrainLevelUpEventJS(event).postCommon(PUBSUB_HYPE_TRAIN_LEVEL_UP);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ChannelStateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ChannelStateEventJS(event).postCommon(CHAT_CHANNEL_CHANNEL_STATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.events.ChannelChangeTitleEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.events.ChannelChangeTitleEventJS(event).postCommon(CHANNEL_CHANGE_TITLE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelSubscribeEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelSubscribeEventJS(event).postCommon(PUBSUB_CHANNEL_SUBSCRIBE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.roomstate.SlowModeEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.roomstate.SlowModeEventJS(event).postCommon(CHAT_ROOMSTATE_SLOW_MODE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.OnsiteNotificationCreationEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.OnsiteNotificationCreationEventJS(event).postCommon(PUBSUB_ONSITE_NOTIFICATION_CREATION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.CustomRewardEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.CustomRewardEventJS(event).postCommon(PUBSUB_CUSTOM_REWARD);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.VideoPlaybackEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.VideoPlaybackEventJS(event).postCommon(PUBSUB_VIDEO_PLAYBACK);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.HypeTrainStartEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.HypeTrainStartEventJS(event).postCommon(PUBSUB_HYPE_TRAIN_START);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UserPredictionResultEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UserPredictionResultEventJS(event).postCommon(PUBSUB_USER_PREDICTION_RESULT);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ChannelLeaveEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ChannelLeaveEventJS(event).postCommon(CHAT_CHANNEL_CHANNEL_LEAVE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.GiftSubscriptionsEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.GiftSubscriptionsEventJS(event).postCommon(CHAT_CHANNEL_GIFT_SUBSCRIPTIONS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.RewardGiftEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.RewardGiftEventJS(event).postCommon(CHAT_CHANNEL_REWARD_GIFT);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.GiftSubUpgradeEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.GiftSubUpgradeEventJS(event).postCommon(CHAT_CHANNEL_GIFT_SUB_UPGRADE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.HypeTrainConductorUpdateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.HypeTrainConductorUpdateEventJS(event).postCommon(PUBSUB_HYPE_TRAIN_CONDUCTOR_UPDATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.PollsEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.PollsEventJS(event).postCommon(PUBSUB_POLLS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UpdateRedemptionProgressEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UpdateRedemptionProgressEventJS(event).postCommon(PUBSUB_UPDATE_REDEMPTION_PROGRESS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.IRCMessageEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.IRCMessageEventJS(event).postCommon(CHAT_CHANNEL_I_R_C_MESSAGE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.roomstate.ChannelStatesEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.roomstate.ChannelStatesEventJS(event).postCommon(CHAT_ROOMSTATE_CHANNEL_STATES);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelUnbanRequestUpdateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelUnbanRequestUpdateEventJS(event).postCommon(PUBSUB_CHANNEL_UNBAN_REQUEST_UPDATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.LeaderboardEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.LeaderboardEventJS(event).postCommon(PUBSUB_LEADERBOARD);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelPointsRedemptionEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelPointsRedemptionEventJS(event).postCommon(PUBSUB_CHANNEL_POINTS_REDEMPTION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.HypeTrainCooldownExpirationEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.HypeTrainCooldownExpirationEventJS(event).postCommon(PUBSUB_HYPE_TRAIN_COOLDOWN_EXPIRATION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.roomstate.FollowersOnlyEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.roomstate.FollowersOnlyEventJS(event).postCommon(CHAT_ROOMSTATE_FOLLOWERS_ONLY);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.RaidUpdateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.RaidUpdateEventJS(event).postCommon(PUBSUB_RAID_UPDATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.UserBanEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.UserBanEventJS(event).postCommon(CHAT_CHANNEL_USER_BAN);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.BitsLeaderboardEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.BitsLeaderboardEventJS(event).postCommon(PUBSUB_BITS_LEADERBOARD);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.RaidCancellationEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.RaidCancellationEventJS(event).postCommon(CHAT_CHANNEL_RAID_CANCELLATION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.HypeTrainEndEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.HypeTrainEndEventJS(event).postCommon(PUBSUB_HYPE_TRAIN_END);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ChannelMessageEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ChannelMessageEventJS(event).postCommon(CHAT_CHANNEL_CHANNEL_MESSAGE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.MessageDeleteErrorFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.MessageDeleteErrorJS(event).postCommon(CHAT_CHANNEL_MESSAGE_DELETE_ERROR);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.events.ChannelGoLiveEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.events.ChannelGoLiveEventJS(event).postCommon(CHANNEL_GO_LIVE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.roomstate.BroadcasterLanguageEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.roomstate.BroadcasterLanguageEventJS(event).postCommon(CHAT_ROOMSTATE_BROADCASTER_LANGUAGE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.RaidGoEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.RaidGoEventJS(event).postCommon(PUBSUB_RAID_GO);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.HypeTrainRewardsEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.HypeTrainRewardsEventJS(event).postCommon(PUBSUB_HYPE_TRAIN_REWARDS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.RedemptionStatusUpdateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.RedemptionStatusUpdateEventJS(event).postCommon(PUBSUB_REDEMPTION_STATUS_UPDATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.HostOnEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.HostOnEventJS(event).postCommon(CHAT_CHANNEL_HOST_ON);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.CheerbombEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.CheerbombEventJS(event).postCommon(PUBSUB_CHEERBOMB);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.SubscriptionEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.SubscriptionEventJS(event).postCommon(CHAT_CHANNEL_SUBSCRIPTION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.common.events.channel.ChannelChangeTitleEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.common.events.channel.ChannelChangeTitleEventJS(event).postCommon(COMMON_CHANNEL_CHANNEL_CHANGE_TITLE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UserUnbanRequestUpdateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UserUnbanRequestUpdateEventJS(event).postCommon(PUBSUB_USER_UNBAN_REQUEST_UPDATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.CustomRewardUpdatedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.CustomRewardUpdatedEventJS(event).postCommon(PUBSUB_CUSTOM_REWARD_UPDATED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UpdateOnsiteNotificationSummaryEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UpdateOnsiteNotificationSummaryEventJS(event).postCommon(PUBSUB_UPDATE_ONSITE_NOTIFICATION_SUMMARY);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.RaidEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.RaidEventJS(event).postCommon(CHAT_CHANNEL_RAID);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ClaimClaimedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ClaimClaimedEventJS(event).postCommon(PUBSUB_CLAIM_CLAIMED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.modules.event.ModuleDisabledEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.modules.event.ModuleDisabledEventJS(event).postCommon(MODULES_MODULE_DISABLED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ListModsEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ListModsEventJS(event).postCommon(CHAT_CHANNEL_LIST_MODS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.CustomRewardDeletedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.CustomRewardDeletedEventJS(event).postCommon(PUBSUB_CUSTOM_REWARD_DELETED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.RewardRedeemedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.RewardRedeemedEventJS(event).postCommon(PUBSUB_REWARD_REDEEMED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.HypeTrainProgressionEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.HypeTrainProgressionEventJS(event).postCommon(PUBSUB_HYPE_TRAIN_PROGRESSION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.PrimeSubUpgradeEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.PrimeSubUpgradeEventJS(event).postCommon(CHAT_CHANNEL_PRIME_SUB_UPGRADE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChatModerationEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChatModerationEventJS(event).postCommon(PUBSUB_CHAT_MODERATION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelUnbanRequestCreateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelUnbanRequestCreateEventJS(event).postCommon(PUBSUB_CHANNEL_UNBAN_REQUEST_CREATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelSubGiftEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelSubGiftEventJS(event).postCommon(PUBSUB_CHANNEL_SUB_GIFT);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.UserTimeoutEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.UserTimeoutEventJS(event).postCommon(CHAT_CHANNEL_USER_TIMEOUT);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.MessageDeleteSuccessFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.MessageDeleteSuccessJS(event).postCommon(CHAT_CHANNEL_MESSAGE_DELETE_SUCCESS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.roomstate.Robot9000EventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.roomstate.Robot9000EventJS(event).postCommon(CHAT_ROOMSTATE_ROBOT9000);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.PointsEarnedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.PointsEarnedEventJS(event).postCommon(PUBSUB_POINTS_EARNED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UpdateRedemptionFinishedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UpdateRedemptionFinishedEventJS(event).postCommon(PUBSUB_UPDATE_REDEMPTION_FINISHED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelBitsBadgeUnlockEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelBitsBadgeUnlockEventJS(event).postCommon(PUBSUB_CHANNEL_BITS_BADGE_UNLOCK);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.CheerEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.CheerEventJS(event).postCommon(CHAT_CHANNEL_CHEER);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ExtendSubscriptionEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ExtendSubscriptionEventJS(event).postCommon(CHAT_CHANNEL_EXTEND_SUBSCRIPTION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ChannelMessageActionEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ChannelMessageActionEventJS(event).postCommon(CHAT_CHANNEL_CHANNEL_MESSAGE_ACTION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.events.ChannelGoOfflineEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.events.ChannelGoOfflineEventJS(event).postCommon(CHANNEL_GO_OFFLINE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.PubSubListenResponseEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.PubSubListenResponseEventJS(event).postCommon(PUBSUB_PUB_SUB_LISTEN_RESPONSE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.RitualEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.RitualEventJS(event).postCommon(CHAT_CHANNEL_RITUAL);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ClearChatEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ClearChatEventJS(event).postCommon(CHAT_CHANNEL_CLEAR_CHAT);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.PointsSpentEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.PointsSpentEventJS(event).postCommon(PUBSUB_POINTS_SPENT);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.RadioEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.RadioEventJS(event).postCommon(PUBSUB_RADIO);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.PredictionUpdatedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.PredictionUpdatedEventJS(event).postCommon(PUBSUB_PREDICTION_UPDATED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ChannelBitsEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ChannelBitsEventJS(event).postCommon(PUBSUB_CHANNEL_BITS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.events.ChannelChangeGameEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.events.ChannelChangeGameEventJS(event).postCommon(CHANNEL_CHANGE_GAME);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.roomstate.EmoteOnlyEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.roomstate.EmoteOnlyEventJS(event).postCommon(CHAT_ROOMSTATE_EMOTE_ONLY);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.common.events.channel.ChannelChangeGameEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.common.events.channel.ChannelChangeGameEventJS(event).postCommon(COMMON_CHANNEL_CHANNEL_CHANGE_GAME);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.PrimeGiftReceivedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.PrimeGiftReceivedEventJS(event).postCommon(CHAT_CHANNEL_PRIME_GIFT_RECEIVED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.BitsBadgeEarnedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.BitsBadgeEarnedEventJS(event).postCommon(CHAT_CHANNEL_BITS_BADGE_EARNED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.common.events.user.PrivateMessageEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.common.events.user.PrivateMessageEventJS(event).postCommon(COMMON_USER_PRIVATE_MESSAGE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.DonationEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.DonationEventJS(event).postCommon(CHAT_CHANNEL_DONATION);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.FollowEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.FollowEventJS(event).postCommon(CHAT_CHANNEL_FOLLOW);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.HostOffEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.HostOffEventJS(event).postCommon(CHAT_CHANNEL_HOST_OFF);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.common.events.channel.ChannelGoOfflineEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.common.events.channel.ChannelGoOfflineEventJS(event).postCommon(COMMON_CHANNEL_CHANNEL_GO_OFFLINE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.SubLeaderboardEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.SubLeaderboardEventJS(event).postCommon(PUBSUB_SUB_LEADERBOARD);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.events.ChannelFollowCountUpdateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.events.ChannelFollowCountUpdateEventJS(event).postCommon(CHANNEL_FOLLOW_COUNT_UPDATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UserPresenceEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UserPresenceEventJS(event).postCommon(PUBSUB_USER_PRESENCE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.AbstractChannelEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.AbstractChannelEventJS(event).postCommon(CHAT_ABSTRACT_CHANNEL);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.ClaimAvailableEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.ClaimAvailableEventJS(event).postCommon(PUBSUB_CLAIM_AVAILABLE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ChannelJoinEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ChannelJoinEventJS(event).postCommon(CHAT_CHANNEL_CHANNEL_JOIN);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UpdateRedemptionStatusesEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UpdateRedemptionStatusesEventJS(event).postCommon(PUBSUB_UPDATE_REDEMPTION_STATUSES);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.FollowingEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.FollowingEventJS(event).postCommon(PUBSUB_FOLLOWING);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.PredictionCreatedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.PredictionCreatedEventJS(event).postCommon(PUBSUB_PREDICTION_CREATED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.UserStateEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.UserStateEventJS(event).postCommon(CHAT_CHANNEL_USER_STATE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.TwitchEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.TwitchEventJS(event).postCommon(CHAT_TWITCH);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.roomstate.SubscribersOnlyEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.roomstate.SubscribersOnlyEventJS(event).postCommon(CHAT_ROOMSTATE_SUBSCRIBERS_ONLY);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.UnbanRequestEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.UnbanRequestEventJS(event).postCommon(PUBSUB_UNBAN_REQUEST);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.CommandEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.CommandEventJS(event).postCommon(CHAT_COMMAND);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ChannelNoticeEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ChannelNoticeEventJS(event).postCommon(CHAT_CHANNEL_CHANNEL_NOTICE);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.PayForwardEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.PayForwardEventJS(event).postCommon(CHAT_CHANNEL_PAY_FORWARD);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.modules.event.ModuleEnabledEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.modules.event.ModuleEnabledEventJS(event).postCommon(MODULES_MODULE_ENABLED);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.FriendshipEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.FriendshipEventJS(event).postCommon(PUBSUB_FRIENDSHIP);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.chat.events.channel.ListVipsEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.chat.events.channel.ListVipsEventJS(event).postCommon(CHAT_CHANNEL_LIST_VIPS);});
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,  pie.ilikepiefoo2.twitchintegration.events.autogenerated.com.github.twitch4j.pubsub.events.CustomRewardCreatedEventFE.class, event -> { new pie.ilikepiefoo2.kubejstwitchintegration.events.autogenerated.pubsub.events.CustomRewardCreatedEventJS(event).postCommon(PUBSUB_CUSTOM_REWARD_CREATED);});
     }
 }

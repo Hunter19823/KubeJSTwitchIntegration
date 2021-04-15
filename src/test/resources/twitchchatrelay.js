@@ -1,11 +1,11 @@
-onEvent('twitch.channel.message', event => {
+onEvent('chat.channel.channel.message', event => {
     utils.server.tell([
         "[",
         Text.aqua("Twitch"),
         "] ",
-        `${event.event.user.name}: ${event.event.message}`
+        `${event.user.name}: ${event.message}`
     ]);
-    console.info(`Channel ID: ${event.event.channel.id}`);
+    console.info(`Channel ID: ${event.channel.id}`);
 });
 onEvent('player.chat', event => {
     twitch.client.chat.channels.forEach( (id) => {
